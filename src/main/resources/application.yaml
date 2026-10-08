@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: BancoIAS
+  r2dbc:
+    url: r2dbc:h2:file:./data/bancoias
+    username: sa
+    pool:
+      max-size: 20
+      max-idle-time: 30s
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+  rabbitmq:
+    host: localhost
+    port: 5673
+    username: admin
+    password: admin
+rabbit:
+  queue:
+    name: bancoias-transact-queue
+server:
+  port: 8083
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

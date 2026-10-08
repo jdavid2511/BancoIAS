@@ -1,0 +1,12 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///bancoias-test;DB_CLOSE_DELAY=-1
+    username: sa
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+logging:
+  level:
+    com.bancoias: INFO

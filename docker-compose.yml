@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bancoias-postgres
+    environment:
+      POSTGRES_DB: bancoias
+      POSTGRES_USER: bancoias
+      POSTGRES_PASSWORD: bancoias
+    ports:
+      - "5432:5432"
+    volumes:
+      - bancoias-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bancoias -d bancoias"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # Puerto para apps (AMQP)
+      - "15672:15672"   # Puerto para Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    restart: unless-stopped
+volumes:
+  bancoias-pg-data:

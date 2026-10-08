@@ -1,0 +1,8 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/bancoias
+    username: bancoias
+    password: bancoias
+    pool:
+      max-size: 20
+      max-idle-time: 30s
