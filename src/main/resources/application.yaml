@@ -16,12 +16,12 @@ spring:
     port: 5673
     username: admin
     password: admin
+    virtual-host: /
 rabbit:
   queue:
     name: bancoias-transact-queue
 server:
-  port: 8083
-
+  port: 8080
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

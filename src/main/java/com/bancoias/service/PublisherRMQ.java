@@ -17,13 +17,11 @@ public class PublisherRMQ {
 
     private final  Queue queue;
     private final  RabbitTemplate rabbitTemplate;
-    private final  ObjectMapper objectMapper;
-
     public void send(TransferRequest message) {
 
         try {
             Object objectMessage = message.toString();
-
+            ObjectMapper objectMapper = new ObjectMapper();
             String jsonMessage = objectMapper.writeValueAsString(objectMessage);
             rabbitTemplate.convertAndSend(queue.getName(), message);
             log.info("Mensaje enviado correctamente a RabbitMQ: {} - queue: {}", jsonMessage, queue.getName());

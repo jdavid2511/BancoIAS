@@ -37,7 +37,7 @@ public class TransferService {
                         return persistRejected(request, decision.reason());
                     }
                     //send message to rabbitmq
-                    publisherRMQ.sendMessage(request);
+                    publisherRMQ.send(request);
                     return processAuthorized(request);
                 })
                 .onErrorResume(DuplicateKeyException.class, e ->
@@ -83,19 +83,19 @@ public class TransferService {
 
     private Mono<TransferResponse> processAuthorized(TransferRequest request) {
         return transactionalOperator.transactional(
-                accountRepository.tryDebit(request.sourceAccountId(), request.amount())
-                        .flatMap(affected -> {
-                            if (affected == 1) {
-                                Transfer transfer = Transfer.authorized(request.requestReference(),
-                                        request.sourceAccountId(), request.destinationAccountId(),
-                                        request.amount(), now());
-                                return transferRepository.save(transfer).map(TransferResponse::from);
-                            }
-                            Transfer transfer = Transfer.rejected(request.requestReference(),
-                                    request.sourceAccountId(), request.destinationAccountId(),
-                                    request.amount(), RejectionReason.INSUFFICIENT_BALANCE, now());
-                            return transferRepository.save(transfer).map(TransferResponse::from);
-                        }))
+                        accountRepository.tryDebit(request.sourceAccountId(), request.amount())
+                                .flatMap(affected -> {
+                                    if (affected == 1) {
+                                        Transfer transfer = Transfer.authorized(request.requestReference(),
+                                                request.sourceAccountId(), request.destinationAccountId(),
+                                                request.amount(), now());
+                                        return transferRepository.save(transfer).map(TransferResponse::from);
+                                    }
+                                    Transfer transfer = Transfer.rejected(request.requestReference(),
+                                            request.sourceAccountId(), request.destinationAccountId(),
+                                            request.amount(), RejectionReason.INSUFFICIENT_BALANCE, now());
+                                    return transferRepository.save(transfer).map(TransferResponse::from);
+                                }))
                 .single();
     }
 

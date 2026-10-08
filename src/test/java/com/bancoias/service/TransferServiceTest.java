@@ -1,26 +1,9 @@
 package com.bancoias.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.bancoias.api.dto.TransferRequest;
-import com.bancoias.api.dto.TransferResponse;
-import com.bancoias.domain.Account;
-import com.bancoias.domain.AccountStatus;
-import com.bancoias.domain.RejectionReason;
-import com.bancoias.domain.Transfer;
-import com.bancoias.domain.TransferStatus;
+import com.bancoias.domain.*;
 import com.bancoias.repositories.AccountRepository;
 import com.bancoias.repositories.TransferRepository;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +14,15 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransferServiceTest {
@@ -43,6 +35,8 @@ class TransferServiceTest {
     private TransferRepository transferRepository;
     @Mock
     private TransactionalOperator transactionalOperator;
+    @Mock
+    private PublisherRMQ publisherRMQ;
 
     private TransferService service;
 
@@ -51,7 +45,7 @@ class TransferServiceTest {
         lenient().when(transactionalOperator.transactional(any(Mono.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
         Clock clock = Clock.fixed(FIXED_NOW, ZoneOffset.UTC);
-        service = new TransferService(accountRepository, transferRepository, transactionalOperator, clock);
+        service = new TransferService(accountRepository, transferRepository, transactionalOperator, clock, publisherRMQ);
     }
 
     @Test
