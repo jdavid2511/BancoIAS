@@ -13,7 +13,7 @@ spring:
       schema-locations: classpath:db/schema.sql
   rabbitmq:
     host: localhost
-    port: 5673
+    port: 5672
     username: admin
     password: admin
     virtual-host: /
